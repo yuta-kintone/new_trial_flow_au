@@ -1,0 +1,677 @@
+<style type="text/css">
+    .waiting-modal,
+    .error-dialog {
+        line-height: 1.2;
+        color: #000;
+    }
+
+    .waiting-modal {
+        pointer-events: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0);
+        z-index: 100000;
+        font-size: 16px;
+    }
+
+    .waiting-modal.is-active {
+        pointer-events: auto;
+        background: rgba(0, 0, 0, 0.65);
+    }
+
+    .waiting-modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 440px;
+        transform: translate(-50%, calc(-50% + 100px));
+        overflow: auto;
+        scroll-behavior: smooth;
+        background-color: #fff;
+        border-radius: 15px;
+        opacity: 0;
+        padding: 24px;
+        text-align: center;
+        box-sizing: content-box;
+    }
+
+    .waiting-modal.is-active .waiting-modal-content {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+        transition: opacity 0.5s, transform 0.5s, background-color 0.5s;
+    }
+
+    .waiting-modal-content--title {
+        font-size: 28px;
+        margin-bottom: 16px;
+        margin-top: 8px;
+    }
+
+    .waiting-modal-text,
+    .waiting-modal-subtext {
+        margin: 16px 0;
+    }
+
+    .waiting-modal-link {
+        color: #5e5e5e;
+        font-size: 14px;
+    }
+
+    .waiting-modal-link:hover {
+        color: #5cb3fd;
+    }
+
+    @media (max-width: 480px) {
+        .waiting-modal-content {
+            width: calc(100vw - 100px);
+            height: 476px;
+        }
+    }
+
+    .waiting-modal .waiting-modal h2 {
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .waiting-modal-circle-container {
+        position: relative;
+        width: 120px;
+        height: 14px;
+        margin: 0 auto;
+    }
+
+    .waiting-modal-circle-container .circle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 10px;
+        background-color: #aaa;
+        transform: translate(40px, 20px) scale(1);
+        transform-origin: center;
+        animation: step-slide 4s infinite running;
+    }
+
+    .waiting-modal-circle-container .circle:nth-child(1) {
+        animation-delay: -1s;
+        background-color: #EF3F24;
+    }
+
+    .waiting-modal-circle-container .circle:nth-child(2) {
+        animation-delay: -2s;
+        background-color: #FEB900;
+    }
+
+    .waiting-modal-circle-container .circle:nth-child(3) {
+        animation-delay: -3s;
+        background-color: #333333;
+    }
+
+    .waiting-modal-circle-container .circle:nth-child(4) {
+        animation-delay: -4s;
+        background-color: #00afaa;
+    }
+
+    @keyframes step-slide {
+        0% {
+            transform: translateX(0) scale(0);
+        }
+
+        25% {
+            transform: translateX(24px) scale(1);
+        }
+
+        50% {
+            transform: translateX(48px) scale(1);
+        }
+
+        75% {
+            transform: translateX(72px) scale(1);
+        }
+
+        100% {
+            transform: translateX(96px) scale(0);
+        }
+    }
+
+    .waiting-modal .waiting-modal-content .waiting-modal-visual {
+        width: 75%;
+    }
+
+    /* -------error-dialog------- */
+
+    .error-dialog {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, calc(-50% + 100px));
+        width: 457px;
+        border-radius: 15px;
+        opacity: 0;
+        background-color: white;
+        transition: opacity 0.5s, transform 0.5s, background-color 0.5s;
+    }
+
+    .waiting-modal.is-active .error-dialog {
+        transform: translate(-50%, -50%);
+        opacity: 1;
+        transition: opacity 0.5s, transform 0.5s, background-color 0.5s;
+    }
+
+    .error-dialog .error-dialog-title {
+        margin-top: 24px;
+        margin-left: 32px;
+        margin-bottom: 16px;
+        font-size: 28px;
+    }
+
+    .error-dialog .error-dialog-close {
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        background-color: 0;
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        transition-property: stroke;
+        border-radius: 50%;
+        padding: 8px;
+    }
+
+    .error-dialog .error-dialog-close:hover {
+        background-color: #EF3F24;
+    }
+
+    .error-dialog .error-dialog-close .close-icon {
+        width: 15px;
+        height: 15px;
+        vertical-align: top;
+    }
+
+    .error-dialog .error-dialog-close:hover .close-icon {
+        stroke: white;
+    }
+
+    .error-dialog .error-dialog-description {
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-left: 32px;
+    }
+
+    .error-dialog .go-home-button {
+        font-family: inherit;
+        margin-left: 32px;
+        background-color: red;
+        border: none;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 5px;
+        transition-duration: 0.5s;
+        transition-timing-function: ease;
+        transition-delay: 0s;
+        line-height: 34px;
+
+    }
+
+    .error-dialog .go-home-button:hover {
+        background-color: #a32a1a;
+    }
+
+    .error-dialog .go-home-button .go-home-link {
+        color: white;
+        text-decoration: none;
+    }
+
+    .error-dialog .get-help-link {
+        color: #5cb3fd;
+        text-decoration: none;
+        margin-left: 24px;
+        font-family: inherit;
+    }
+
+    .error-dialog .get-help-link:hover {
+        color: #5cb3fd;
+        text-decoration-line: underline;
+        margin-left: 24px;
+    }
+
+    .error-dialog .error-dialog-visual {
+        margin-top: 16px;
+        width: 100%;
+        vertical-align: top;
+    }
+
+    @media (max-width: 480px) {
+        .error-dialog {
+            width: 310px;
+        }
+    }
+</style>
+
+<div id="signup-waiting-modal" class="waiting-modal">
+    <div class="waiting-modal-content">
+        <h2 class="waiting-modal-content--title">Hang tight!</h2>
+        <div class="waiting-modal-circle-container" aria-hidden="true">
+            <span class="circle"></span>
+            <span class="circle"></span>
+            <span class="circle"></span>
+            <span class="circle"></span>
+        </div>
+        <p class="waiting-modal-text">We're building your very own Kintone environment. <br>This won’t take long...</p>
+        <img class="waiting-modal-visual"
+            src="https://stagingkintone.wpengine.com/wp-content/uploads/2021/03/signup-waiting-modal-visual.png" alt="">
+        <p class="waiting-modal-subtext">You can also complete this later via the email we'll send you.</p>
+        <a class="waiting-modal-link" href="https://www.kintone.com/">Finish it later</a>
+    </div>
+</div>
+<div id="signup-error-modal" class="waiting-modal">
+    <div class="error-dialog">
+        <h2 class="error-dialog-title">Oops! Something went wrong</h2>
+        <button type="button" aria-label="Close" class="error-dialog-close">
+            <svg class="close-icon" fill='none' stroke='#5e5e5e' stroke-width='9' stroke-dashoffset='0'
+                stroke-dasharray='0' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 100 100'>
+                <line x1="15" y1="15" x2="85" y2="85" />
+                <line x1="85" y1="15" x2="15" y2="85" />
+            </svg>
+        </button>
+        <p class="error-dialog-description">We'll send you an email when your Kintone <br> environment is ready.</p>
+        <button class="go-home-button"><a class="go-home-link" href="https://www.kintone.com/">Go Back
+                Home</a></button>
+        <a class="get-help-link" href="https://get.kintone.help/store/en/trial/first.html">Get Help!</a>
+        <img class="error-dialog-visual"
+            src="https://stagingkintone.wpengine.com/wp-content/uploads/2021/03/signup-error-modal-visual.png" alt="">
+    </div>
+</div>
+<div id="iframe-content"></div>
+<div class="form-embed c-white">
+    <div class="trial-form" id="hubspotform">
+        <!DOCTYPE html>
+        <html xmlns:th="http://www.thymeleaf.org">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            /**
+            * require jQuery, hbspt
+            **/
+
+            var REDIRECT_URL = 'https://www.kintone.com/thank-you';
+            var ORDER_ID_PARAM = "order_id";
+            var F_ID = "4a5eb5a0-9e25-4d33-8667-268c851a8057" //Regular
+            // var F_ID =  "1a85a987-3907-4a40-a60d-bde365432658" //NPO
+            //var F_ID =  "0c00a02e-1a07-45a4-8697-c5706acb53f2" //Edu/Gov
+
+            function getParam(name, url) {
+                if (!url) url = window.location.href;
+                name = name.replace(/[\[\]]/g, "\\$&");
+                var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                    results = regex.exec(url);
+                if (!results) return null;
+                if (!results[2]) return '';
+                return decodeURIComponent(results[2].replace(/\+/g, " "));
+            }
+            window.clara = (function ($, hbspt) {
+
+                function findPlane() {
+                    var host = window.location.host;
+                    var parts = host.split(".");
+                    if (parts.length === 3) {
+                        return "master";
+                    }
+                    return parts[1];
+                }
+
+                function waitForDomainCreation(apiClient, uuid, fqdn, callbacks) {
+                    function waitForDomainCreationCore(apiClient, uuid, fqdn, attempts, callbacks) {
+                        setTimeout(function () {
+                            attempts++;
+                            apiClient.fetchDomainStatus(uuid, fqdn, {
+                                onSuccess: function (response) {
+                                    if (response.created) {
+                                        callbacks.onSuccess(response.initializationUrl);
+                                    } else {
+                                        waitForDomainCreationCore(apiClient, uuid, fqdn, attempts, callbacks);
+                                    }
+                                },
+                                onFailure: function () {
+                                    // とりあえず1分ぐらい許容する
+                                    if (attempts > 20) {
+                                        callbacks.onFailure();
+                                    } else {
+                                        waitForDomainCreationCore(apiClient, uuid, fqdn, attempts, callbacks);
+                                    }
+                                }
+                            })
+                        }, 3000);
+                    }
+                    waitForDomainCreationCore(apiClient, uuid, fqdn, 0, callbacks);
+                }
+
+                var ApiClient = (function () {
+                    var ApiClient = function (storeUrlPrefix) {
+                        this.storeUrlPrefix = storeUrlPrefix;
+                    };
+
+                    function call(request, callbacks) {
+                        if (
+                            !callbacks ||
+                            typeof callbacks.onSuccess !== "function" ||
+                            typeof callbacks.onFailure !== "function"
+                        ) {
+                            console.error(
+                                "AssertError: callbacks.onSuccess, callback.onFailure must be function"
+                            );
+                            return;
+                        }
+
+                        $.ajax(request)
+                            .then(function (response) {
+                                if (!response) {
+                                    callbacks.onFailure()
+                                    return;
+                                }
+
+                                callbacks.onSuccess(response);
+                            })
+                            .catch(function (error) {
+                                callbacks.onFailure(error);
+                            });
+                    }
+
+                    ApiClient.prototype.fetchUUID = function (callbacks) {
+                        call({
+                            url: this.storeUrlPrefix + "/api/open/uuid.json",
+                            type: "GET",
+                            contentType: "application/json; charset=utf-8"
+                        }, {
+                            onSuccess: function (response) {
+                                callbacks.onSuccess(response.result.uuid);
+                            },
+                            onFailure: callbacks.onFailure
+                        })
+                    };
+
+                    ApiClient.prototype.validateSubdomain = function (subdomain, callbacks) {
+                        if (!subdomain || subdomain.length === 0) {
+                            callbacks.onFailure();
+                            return;
+                        }
+
+                        call({
+                            url: this.storeUrlPrefix + "/api/open/validateSubdomain.json",
+                            type: "POST",
+                            data: JSON.stringify({ subdomain: subdomain }),
+                            contentType: "application/json; charset=utf-8"
+                        }, {
+                            onSuccess: callbacks.onSuccess,
+                            onFailure: function (error) {
+                                if (error.status === 400 && error.responseJSON) {
+                                    var response = error.responseJSON;
+                                    var messages = response.errors.subdomain.messages;
+                                    if (messages) {
+                                        callbacks.onFailure(messages.join());
+                                    }
+                                } else {
+                                    callbacks.onFailure();
+                                }
+                            }
+                        });
+                    };
+
+                    ApiClient.prototype.fetchDomainStatus = function (uuid, fqdn, callbacks) {
+                        if (!fqdn || fqdn.length === 0) {
+                            callbacks.onFailure();
+                            return;
+                        }
+
+                        call({
+                            url: this.storeUrlPrefix + "/api/open/status.json",
+                            type: "POST",
+                            data: JSON.stringify({ fqdn: fqdn, uuid: uuid }),
+                            contentType: "application/json; charset=utf-8"
+                        }, {
+                            onSuccess: function (response) {
+                                callbacks.onSuccess({
+                                    created: response.result.created,
+                                    initializationUrl: response.result.initializationUrl
+                                });
+                            },
+                            onFailure: callbacks.onFailure
+                        })
+                    }
+
+                    return ApiClient;
+                }());
+
+                var TrialForm = (function () {
+                    function getSignupUUIDInput($form) {
+                        return $form.find('input[name="signup_uuid"]');
+                    }
+
+                    function getSubmitButton($form) {
+                        return $form.find('input[type="submit"]');
+                    }
+
+                    function getSubdomainInput($form, isDeveloper) {
+                        return isDeveloper ? $form.find('input[name="developer_license_domain"]') : $form.find('input[name="domain"]');
+                    }
+
+                    function getPlaneInput($form) {
+                        return $form.find('input[name="plane"]');
+                    }
+
+                    function getSubdomainMessageContainer($form) {
+                        return $form.find('#domain-message');
+                    }
+
+                    var TrialForm = function (config) {
+                        this.portalId = config.portalId;
+                        this.formId = config.formId;
+                        this.target = config.target;
+                        this.baseDomain = config.baseDomain;
+                        this.apiClient = new ApiClient(config.storeUrlPrefix);
+                        this.isDeveloper = config.isDeveloper;
+                        this.onFormSubmitted = config.onFormSubmitted;
+                        this.onDomainCreated = config.onDomainCreated;
+                        this.onDomainCreationFailure = config.onDomainCreationFailure;
+
+                        this.uuid = "";
+                        this.subdomain = "";
+                    };
+
+                    TrialForm.prototype.create = function () {
+                        var that = this;
+                        var handleFormReady = function ($form) {
+                            that.setupForm($form);
+                        };
+                        var handleFormSubmitted = function () {
+                            // 1. order_idを取得
+                            var orderId = getParam(ORDER_ID_PARAM);
+                            var encodedOrderId = encodeURIComponent(orderId);
+                            // 2. iframeをhiddenで作成
+                            var iframe = document.createElement("iframe");
+                            iframe.setAttribute("style", "display:none;");
+                            iframe.setAttribute("src", REDIRECT_URL + "?" + ORDER_ID_PARAM + "=" + encodedOrderId);
+                            document.getElementById("iframe-content").appendChild(iframe);
+
+                            if (typeof that.onFormSubmitted === 'function') {
+                                that.onFormSubmitted();
+                            }
+                            var fqdn = that.subdomain + '.' + that.baseDomain;
+                            waitForDomainCreation(that.apiClient, that.uuid, fqdn, {
+                                onSuccess: that.onDomainCreated,
+                                onFailure: that.onDomainCreationFailure
+                            });
+                        }
+                        this.apiClient.fetchUUID({
+                            onSuccess: function (uuid) {
+                                that.uuid = uuid;
+                                hbspt.forms.create({
+                                    portalId: that.portalId,
+                                    formId: that.formId,
+                                    target: that.target,
+                                    onFormReady: handleFormReady,
+                                    onFormSubmitted: handleFormSubmitted
+                                })
+                            },
+                            onFailure: function () {
+                                console.error('fail fetchUUID')
+                            }
+                        });
+                    };
+
+                    TrialForm.prototype.setupForm = function ($form) {
+                        var $uuidInput = getSignupUUIDInput($form);
+                        $uuidInput.val(this.uuid);
+
+                        var $submit = getSubmitButton($form);
+                        $submit.prop("disabled", true);
+
+                        var $subdomainInput = getSubdomainInput($form, this.isDeveloper);
+                        var isValidSubdomain = false;
+                        var that = this;
+                        $subdomainInput.change(function (e) {
+                            that.subdomain = e.target.value.trim();
+                            that.validateDomainInput($form, {
+                                onSuccess: function () {
+                                    isValidSubdomain = true;
+                                },
+                                onFailure: function () {
+                                    isValidSubdomain = false;
+                                }
+                            });
+                        });
+                        $subdomainInput.on("input", function () {
+                            isValidSubdomain = false;
+                        });
+
+                        var hubspotForm = document.querySelector(this.target);
+                        hubspotForm.addEventListener(
+                            "submit",
+                            function (e) {
+                                if (!isValidSubdomain) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }
+                            },
+                            true
+                        );
+
+                        // for development environment
+                        var $plane = getPlaneInput($form);
+                        if ($plane.length === 1) {
+                            $plane.val(findPlane());
+                        }
+                    };
+
+                    TrialForm.prototype.validateDomainInput = function ($form, callbacks) {
+                        var $domainMessageContainer = getSubdomainMessageContainer($form);
+                        if (!$domainMessageContainer[0]) {
+                            $form
+                                .find('input[name="domain"]')
+                                .parent()
+                                .parent()
+                                .append(
+                                    '<ul id="domain-message" class="hs-error-msgs inputs-list"></ul>'
+                                );
+                            $domainMessageContainer = $form.find('ul[id="domain-message"]');
+                        }
+
+                        this.apiClient.validateSubdomain(this.subdomain, {
+                            onSuccess: function () {
+                                $domainMessageContainer.empty();
+                                $domainMessageContainer.append("<li><label>Available</label></li>");
+                                $form.find(':input[type="submit"]').prop("disabled", false);
+
+                                if (callbacks && typeof callbacks.onSuccess) {
+                                    callbacks.onSuccess();
+                                }
+                            },
+                            onFailure: function (message) {
+                                $domainMessageContainer.empty();
+                                if (message) {
+                                    message.split("\r\n").forEach(function (m) {
+                                        $domainMessageContainer.append("<li><label>" + m + "</label></li>");
+                                    });
+                                }
+                                $form.find(':input[type="submit"]').prop("disabled", true);
+
+                                if (callbacks && typeof callbacks.onFailure) {
+                                    callbacks.onFailure();
+                                }
+                            }
+                        });
+                    };
+
+                    return TrialForm;
+                }());
+
+                return {
+                    findPlane: findPlane,
+                    trialForm: {
+                        create: function (config) {
+                            var trialForm = new TrialForm(config);
+                            trialForm.create();
+                            return trialForm;
+                        }
+                    }
+                }
+            }(jQuery, hbspt));
+/*]]>*/
+        </script>
+
+        </html>
+        <script>
+            function showWaitingModal() {
+                var waitingModalEl = document.getElementById('signup-waiting-modal');
+                waitingModalEl.classList.add('is-active')
+            }
+
+            function hideWaitingModal() {
+                var waitingModalEl = document.getElementById('signup-waiting-modal');
+                waitingModalEl.classList.remove('is-active')
+            }
+            function showErrorModal() {
+                var errorModalEl = document.getElementById('signup-error-modal');
+                errorModalEl.classList.add('is-active')
+            }
+            var handleFormSubmitted = function () {
+                showWaitingModal();
+            };
+
+            var handleDomainCreated = function (initializationUrl) {
+                window.location.href = initializationUrl;
+            };
+
+            var handleDomainCreationFailure = function () {
+                hideWaitingModal();
+                showErrorModal();
+            };
+            function hideErrorModal() {
+                var errorModalEl = document.getElementById('signup-error-modal');
+                errorModalEl.classList.remove('is-active')
+            }
+            var errorModalCloseButton = document.querySelector('.error-dialog-close');
+            errorModalCloseButton.addEventListener('click', function () {
+                hideErrorModal();
+            });
+
+            clara.trialForm.create({
+                portalId: "1857320",
+                formId: F_ID,
+                target: '#hubspotform',
+                baseDomain: 'kintone.com',
+                storeUrlPrefix: 'https://get.kintone.com',
+                onFormSubmitted: handleFormSubmitted,
+                onDomainCreated: handleDomainCreated,
+                onDomainCreationFailure: handleDomainCreationFailure
+            });
+        </script>
+    </div>
+</div>
